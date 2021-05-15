@@ -1,6 +1,7 @@
 from topsort import sortNodes
 from cycle_detect import detectedCycle
 from adjacencies import getAdjacencies
+from mst import getMST
 
 if __name__ == __main__:
     if detectedCycle():
@@ -8,4 +9,5 @@ if __name__ == __main__:
 
     sortedNodes = sortNodes()
     adjList = getAdjacencies(sortedNodes)
+    mst = getMST()
     

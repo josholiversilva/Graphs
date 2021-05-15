@@ -2,12 +2,12 @@
 # Time: O(V*E) -> simple implementation
 # Time: O(E*Log(V)) -> using min heap
 #                 12
-#        (B)-----------------
-#     5/    6\              |
-# (A)         (D)           |
-#    \      /     \2       3|
-#  10 \   /2       (E) --- (F)
-#      \ /                  |
+#        (B)-----------------     (H)
+#     5/    6\              |    /    \ 
+# (A)         (D)           |   / 5     \ 2
+#    \      /     \2       3|  /          \
+#  10 \   /2       (E) --- (F) --- (G) --- (I)
+#      \ /                  |   8       1
 #      (C)------------------|
 #               3
 import time
@@ -23,16 +23,17 @@ C = Node('C')
 D = Node('D')
 E = Node('E')
 F = Node('F')
-G = Node('F')
-H = Node('F')
-I = Node('F')
-A.adjacencyMap = {B: 5, C:5}
-B.adjacencyMap = {D: 3, F:3}
-C.adjacencyMap = {D:2, F:4}
+G = Node('G')
+H = Node('H')
+I = Node('I')
+A.adjacencyMap = {B: 5, C:10}
+B.adjacencyMap = {D: 6, F:12}
+C.adjacencyMap = {D: 2, F:3}
 D.adjacencyMap = {E: 2}
-E.adjacencyMap = {F: 3, G: 4}
-F.adjacencyMap = {H: 5, I: 8}
-H.adjacencyMap = {I:2}
+E.adjacencyMap = {F: 3}
+F.adjacencyMap = {H: 5, G: 8}
+G.adjacencyMap = {I: 1}
+H.adjacencyMap = {I: 2}
 
 # Simple Implementation O(N^2)
 def dijkstra(graph, sourceNode, destNode):
@@ -120,6 +121,7 @@ def dijkstraFast(graph, sourceNode, destNode):
     print("Cost From " + sourceNode.nodeLetter + " -> " + destNode.nodeLetter + ': ' + str(cost))
     elapse = time.time() - start
     print('time: ' + str(elapse))
+
 
 graph = [A,B,C,D,E,F,G,H,I]
 print("Simple Implementation")
