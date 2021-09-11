@@ -37,9 +37,9 @@ H.adjacencyMap = {I: 2}
 
 # Simple Implementation O(N^2)
 def dijkstra(graph, sourceNode, destNode):
-    start = time.time()
     vertexMap = {vertex: {'shortestPath': float('inf'), 'prev': None} for vertex in graph}
     vertexMap[sourceNode] = {'shortestPath': 0, 'prev': None}
+
     visited = set()
     nextNode = sourceNode
     shortest = float('inf')
@@ -75,52 +75,70 @@ def dijkstra(graph, sourceNode, destNode):
     #shortestPath = '->'.join(shortestPath)
     #print("Shortest Path: " + shortestPath)
     print("Cost From " + str(sourceNode.nodeLetter) + " -> " + str(destNode.nodeLetter) + ": " + str(vertexMap[destNode]['shortestPath']))
-    elapse = time.time() - start
-    print('time: ' + str(elapse))
 
 # Heap Implementation
 # Create hashmap: O(V)
 # Create list for heap: O(E)
 # Convert list back to hashmap: O(E)
 # Heapify: O(VLogV)
-# Time: O(2E+2VLogV) -> O(NLogN)
+# Time: O(E+2V+VLogV) -> O(NLogN)
 import heapq
 import collections
 def dijkstraFast(graph, sourceNode, destNode):
-    start = time.time()
+    vertices = createNetwork(graph, sourceNode) # O(V)
+    visited = set()
+
+    while vertices:
+        nodeInfo = getMinNodeFromVertices(vertices) # O(V)
+        vertices = removeNodeInVertices(nodeInfo, vertices) # O(VLogV)
+        visited.add(nodeInfo)
+
+        currNode = nodeInfo[0]
+        currCost = nodeInfo[1]
+        for child,cost in currNode.adjacencyMap.items(): # O(E)
+            if child in vertices: #O(1)
+                vertices[child] = min(currCost+cost, vertices[child])
+                print(child.nodeLetter + ' - ' + str(vertices[child]))
+
+    destCost = getTargetCost(destNode, visited)
+
+    print("Cost From " + sourceNode.nodeLetter + " -> " + destNode.nodeLetter + ': ' + str(destCost))
+
+def createNetwork(graph, sourceNode):
     vertices = {}
     for x in range(len(graph)):
         if graph[x] == sourceNode:
             vertices[graph[x]] = 0
         else:
             vertices[graph[x]] = float('inf')
-    visited = set()
-    nextNode = sourceNode
-    shortest = float('inf')
 
-    while vertices:
-        verticesList = [(value,key) for key,value in vertices.items()]
-        heapq.heapify(verticesList)
-        currNode = heapq.heappop(verticesList)
-        visited.add(currNode)
-        tmp = {}
-        for value,key in verticesList:
-            tmp[key] = value
-        vertices = dict(tmp)
+    return vertices
 
-        for child,cost in currNode[1].adjacencyMap.items():
-            if child in vertices:
-                vertices[child] = min(currNode[0]+cost, vertices[child])
-                print(child.nodeLetter + ' - ' + str(vertices[child]))
+# return tuple: (node,cost)
+def getMinNodeFromVertices(vertices):
+    verticesList = [(value,key) for key,value in vertices.items()]
+    heapq.heapify(verticesList)
+    minNode = heapq.heappop(verticesList)
 
+    return (minNode[1], minNode[0])
+
+# takes node
+def removeNodeInVertices(node, vertices):
+    newVertices = {}
+    for vertex,cost in vertices.items():
+        if node[0] == vertex:
+            continue
+        newVertices[vertex] = cost
+
+    return newVertices
+
+def getTargetCost(destNode, visited):
     cost = -1
     for visit in visited:
-        if visit[1] == destNode:
-            cost = visit[0]
+        if visit[0] == destNode:
+            cost = visit[1]
 
-    print("Cost From " + sourceNode.nodeLetter + " -> " + destNode.nodeLetter + ': ' + str(cost))
-    elapse = time.time() - start
-    print('time: ' + str(elapse))
+    return cost
 
 
 graph = [A,B,C,D,E,F,G,H,I]
